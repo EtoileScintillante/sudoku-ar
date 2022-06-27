@@ -37,7 +37,7 @@ std::vector<Point> detectGrid(Mat image)
 }
 
 // This function takes as input the 4 points corresponding to 4 corners of the grid
-// and it creates a cropped image containing only the grid
+// and it creates a cropped image containing only the grid, top down view
 Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
 {
     Mat cropped;
@@ -45,4 +45,56 @@ Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
     cropped = sourceIMG(r);
 
     return cropped;
+}
+
+// Sort points from top left (tl), top right (tr), bottom left (bl), bottom right (br)
+std::vector<Point> sortPoints(std::vector<Point> corners)
+{
+    std::vector<Point> sorted;
+
+    int largestSum = 0, smallestSum = 100000;
+    int xSmall = 10000; int xBig = 0;
+    int indexTL, indexTR, indexBL, indexBR;
+
+    // Identidy top left and bottom right corners
+    for (int i = 0; i < corners.size(); i++)
+    {
+        int sum = corners[i].x + corners[i].y; // sum up x and y coordinates
+        if (sum < smallestSum)
+        {
+            smallestSum = sum;
+            indexTL = i; // top left corner has the smallest sum 
+        }
+        if (sum > largestSum)
+        {
+            largestSum = sum;
+            indexBR = i; // bottom right has the largest sum 
+        }
+    }
+
+    // Identify top right and bottom left
+    for (int i = 0; i < corners.size(); i++)
+    {
+        if (i == indexBR || i == indexTL)
+        {
+            continue;
+        }
+        if (corners[i].x < xSmall)
+        {
+            xSmall = corners[i].x; // bottom left has the smallest x coordinate
+            indexBL = i;
+        }
+        if (corners[i].x > xBig)
+        {
+            xBig = corners[i].x; // top right has the largest x coordinate
+            indexTR = i;
+        }
+    }
+
+    sorted.push_back(corners[indexTL]);
+    sorted.push_back(corners[indexTR]);
+    sorted.push_back(corners[indexBL]);
+    sorted.push_back(corners[indexBR]);
+
+    return sorted;
 }
