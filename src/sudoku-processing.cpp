@@ -15,13 +15,15 @@ std::vector<Point> detectGrid(Mat image)
 
     double maxArea = 0;
     int contourIndex = 0;
+
+    // We are looking for the biggest square like shaped blob 
     for (int i = 0; i < contours.size(); i++) 
     {
         double area = contourArea(contours[i]);
         double perimeter = arcLength(contours[i], true);
         std::vector<Point> approx1;
-        approxPolyDP(contours[i], approx1, 0.02*perimeter, true);
-        if (area > maxArea && approx1.size() == 4) 
+        approxPolyDP(contours[i], approx1, 0.02*perimeter, true); // Draw shape around contours
+        if (area > maxArea && approx1.size() == 4) // Grid has 4 corners 
         {
             maxArea = area;
             approx = approx1;
