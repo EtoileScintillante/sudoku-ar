@@ -248,8 +248,6 @@ std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector <
                 {
                     Rect r1= boundingRect(ROIcontours[j]); // Create rect around the digit
                     Mat ROI1 = ROI(r1); // Create image of the digit
-                    imshow("Digit",ROI1);
-                    waitKey(0);
                     Mat temp1, temp2; 
                     resize(ROI1,temp1, Size(10,10), 0,0,INTER_LINEAR );
                     temp1.convertTo(temp2,CV_32FC1);
