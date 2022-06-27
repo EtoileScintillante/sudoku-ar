@@ -35,3 +35,14 @@ std::vector<Point> detectGrid(Mat image)
 
     return approx;
 }
+
+// This function takes as input the 4 points corresponding to 4 corners of the grid
+// and it creates a cropped image containing only the grid
+Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
+{
+    Mat cropped;
+    Rect r = boundingRect(corners);
+    cropped = sourceIMG(r);
+
+    return cropped;
+}
