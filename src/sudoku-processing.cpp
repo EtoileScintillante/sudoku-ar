@@ -112,3 +112,35 @@ std::vector<Point> sortPoints(std::vector<Point> corners)
 
     return sorted;
 }
+
+// Returns a binary image with the lines of the grid in white and 
+// and everything within the lines is black
+// This step is necessary for finding the contours of the cells
+Mat filterOutDigits(Mat image)
+{   
+    Mat noDigits;
+    cvtColor(image, noDigits, COLOR_BGR2GRAY);
+    adaptiveThreshold(noDigits, noDigits, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 57, 5);
+    
+    std::vector< std::vector < Point > > contours; 
+    std::vector<Vec4i> hierarchy;
+    findContours(noDigits, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
+    for (int i = 0; i < contours.size(); i++)
+    {
+        double area = contourArea(contours[i]);
+        if (area < 1000) // Find contours of digits
+        {
+            drawContours(noDigits, contours, i, Scalar(0,0,0), -1); // Filter digits out
+        }
+    }
+
+    // Fix horizontal and vertical lines (this makes the lines clearer)
+    Mat dst;
+    Mat verticalKernel = getStructuringElement(MORPH_RECT, Size(1,5));
+    morphologyEx(noDigits, dst, MORPH_CLOSE, verticalKernel, Point(-1,-1), 9);
+    Mat horizontalKernel = getStructuringElement(MORPH_RECT, Size(5,1));
+    morphologyEx(noDigits, dst, MORPH_CLOSE, horizontalKernel, Point(-1,-1), 4);
+
+    return dst;
+}
