@@ -10,7 +10,8 @@ int main()
 {  
     //Process image to extract contour
     Mat thr,gray,con;
-    Mat src=imread("images/training-extended.jpeg",1);
+    Mat src=imread("images/train.png",1);
+    resize(src, src, Size(src.cols*2,src.rows*2), 0,0,INTER_LINEAR );
     cvtColor(src,gray,COLOR_BGR2GRAY);
     threshold(gray,thr,200,255,THRESH_BINARY_INV); // Threshold to find contours
     thr.copyTo(con);
@@ -33,7 +34,7 @@ int main()
         sample.push_back(tmp2.reshape(1,1)); // Store  sample data
         imshow("src",src);
         int c=waitKey(0); // Read corresponding label for contour from keyboard
-        c-=0x30;     // Convert ascii to intiger value
+        c-=0x30; // Convert ascii to intiger value
         response_array.push_back(c); // Store label to a mat
         rectangle(src,Point(r.x,r.y), Point(r.x+r.width,r.y+r.height), Scalar(0,255,0),2,8,0);    
     }
@@ -43,11 +44,11 @@ int main()
     tmp=response_array.reshape(1,1); // Make continuous
     tmp.convertTo(response,CV_32FC1); // Convert to float
 
-    FileStorage Data("TrainingDataEx.yml",FileStorage::WRITE); // Store the sample data in a file
+    FileStorage Data("TrainingData.yml",FileStorage::WRITE); // Store the sample data in a file
     Data << "data" << sample;
     Data.release();
 
-    FileStorage Label("LabelDataEx.yml",FileStorage::WRITE); // Store the label data in a file
+    FileStorage Label("LabelData.yml",FileStorage::WRITE); // Store the label data in a file
     Label << "label" << response;
     Label.release();
     cout<<"Training and Label data created successfully! "<<endl;
