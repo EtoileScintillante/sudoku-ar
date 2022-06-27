@@ -40,9 +40,21 @@ std::vector<Point> detectGrid(Mat image)
 // and it creates a cropped image containing only the grid, top down view
 Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
 {
-    Mat cropped;
-    Rect r = boundingRect(corners);
-    cropped = sourceIMG(r);
+    Point2f src_vertices[4];
+    src_vertices[0] = corners[0]; // top left
+    src_vertices[1] = corners[1]; // top right
+    src_vertices[2] = corners[2]; // bottom left
+    src_vertices[3] = corners[3]; // bottom right
+
+    Point2f dst_vertices[4];
+    dst_vertices[0] = Point(0, 0); // top left
+    dst_vertices[1] = Point(640, 0); // top right
+    dst_vertices[2] = Point(0, 640); // bottom left
+    dst_vertices[3] = Point(640, 640); // bottom right
+
+    Mat M = getPerspectiveTransform(src_vertices, dst_vertices);
+    Mat cropped(640, 640, CV_8UC3);
+    warpPerspective(sourceIMG, cropped, M, cropped.size(), INTER_LINEAR, BORDER_CONSTANT);
 
     return cropped;
 }
