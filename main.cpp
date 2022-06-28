@@ -124,7 +124,8 @@ int main(int argc, char* argv[])
             else // If solution has been found
             {
                 std::cout << "here4" << std::endl;
-                //TODO: find new wau of showing solution!
+                break;
+                //TODO: find new way of showing solution!
             }
             
             // Press  ESC on keyboard to exit
