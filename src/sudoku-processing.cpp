@@ -331,13 +331,13 @@ bool sortPointsLeftToRight(Point a, Point b)
 }
 
 // Sort vector of points from top to bottom and left to right
-std::vector< Point > sortPoints100(std::vector< Point > pVec)
+std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec)
 {
     // Reverse vector to sort the points from top to bottom
     reverse(pVec.begin(), pVec.end());
 
     // Now to sort them from left to right
-    std::vector < Point > sortedPoints;
+    std::vector < std::vector<Point > > sortedPoints;
     std::vector < Point > temp;
     int row = 0;
     for (int i = 0; i < 10; i++)
@@ -350,10 +350,11 @@ std::vector< Point > sortPoints100(std::vector< Point > pVec)
         }
         std::sort(temp.begin(), temp.end(), sortPointsLeftToRight);
         // Push sorted vector<Point> back to sortedCells
-        for (int k = 0; k < 10; k++)
+        /*for (int k = 0; k < 10; k++)
         {
             sortedPoints.push_back(temp[k]);
-        }
+        */
+        sortedPoints.push_back(temp);
         row += 10; // Move to next row
 
     }
@@ -361,11 +362,50 @@ std::vector< Point > sortPoints100(std::vector< Point > pVec)
     return sortedPoints;
 }
 
+// Calculates the position of the digits (used in displaySolution)
+// Assumption: vector must contain 3 points
+Point calculatePos(std::vector< Point > vp)
+{
+    Point pos;
+    int posx = (vp[0].x + vp[1].x) / 2; // (top left x + top right x) / 2
+    int posy = (vp[0].y + vp[2].y) / 2; // (top left y + bottom left 7) / 2
+    pos.x = posx;
+    pos.y = posy;
+
+    return pos;
+}
+
 // Display solution on source image
 // First vector is the solution (containing no empty cells)
 // Second vector is the one containing the original detected grid (with empty cells)
 // Third vector is the one containing the 100 joint points
-void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < Point> vp)
+void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < std::vector< Point> > vp)
 {
-    //TODO
+    int row = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            // Every grid cell is surrounded by 4 points
+            // 3 of these points will be stored in temp and passed to calculatePos to obtain
+            // the x and y coordinates of where the digit needs to be drawn
+            if (original[i][j] == 0) // Only fill in the empty cells
+            {
+                std::vector< Point > temp;
+                temp.push_back(vp[i][j]); // Top left point of cell
+                temp.push_back(vp[i][j + 1]); // Top right point of cell
+                temp.push_back(vp[i + 1][j]); // Bottom left point of cell
+                Point pos = calculatePos(temp);
+                char digit[7];
+                sprintf(digit, "%d", solution[i][j]);
+                putText(source, digit, pos, 0, 0.7, Scalar(44, 125, 49), 2);
+            }
+            else
+            {
+                continue;
+            }
+
+        }
+        
+    }
 }

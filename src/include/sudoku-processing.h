@@ -45,12 +45,16 @@ std::vector< Point > extractJoints(Mat source);
 bool sortPointsLeftToRight(Point a, Point b);
 
 // Sort vector of points from top to bottom and left to right
-std::vector< Point > sortPoints100(std::vector< Point > pVec);
+std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec);
+
+// Calculates the position of the digits (used in displaySolution)
+// Assumption: vector must contain 3 points
+Point calculatePos(std::vector< Point > vp);
 
 // Display solution on source image
 // First vector is the solution (containing no empty cells)
 // Second vector is the one containing the original detected grid (with empty cells)
 // Third vector is the one containing the 100 joint points
-void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < Point> vp);
+void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < std::vector< Point> > vp);
 
 #endif /*__SUDOKU_PROCESSING__*/
