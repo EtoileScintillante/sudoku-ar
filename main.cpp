@@ -124,19 +124,7 @@ int main(int argc, char* argv[])
             else // If solution has been found
             {
                 std::cout << "here4" << std::endl;
-                /// Extract joints from grid ///
-                Mat points = src.clone();
-                std::vector< Point > jointPoints;
-                jointPoints = extractJoints(src.clone());
-
-                if (jointPoints.size() == 100) 
-                {
-                    /// Display solution ///
-                    std::vector< std::vector< Point > > pointsSorted = sortPoints100(jointPoints);
-                    Mat solutionimg = displaySolution(src, gridSOLVED, gridOG, pointsSorted);
-                    imwrite("solution1.png", solutionimg);
-                    imshow("Display window", src);
-                } 
+                //TODO: find new wau of showing solution!
             }
             
             // Press  ESC on keyboard to exit
