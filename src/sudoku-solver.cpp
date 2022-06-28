@@ -45,7 +45,7 @@ bool checkPlace(std::vector<std::vector< int > > s, int row, int col, int num)
 
 // This function inserts a num in every cell that has a 0 (i.e. the cell is empty)
 // It is important to pass a grid vector by reference so we can access the digits later to create the output image
-bool solve(std::vector<std::vector< int > > s, int row, int col, std::vector<std::vector< int > > &solvedGrid)
+bool solve_sudoku(std::vector<std::vector< int > > s, int row, int col, std::vector<std::vector< int > > &solvedGrid)
 {
     // Return true and print sudoku if we managed to place a num in every empty cell
     if (row == 9 - 1 && col == 9)
@@ -62,7 +62,7 @@ bool solve(std::vector<std::vector< int > > s, int row, int col, std::vector<std
     // If cell is not empty, move to next one
     if (s[row][col] > 0) 
     {
-        return solve(s, row, col + 1, solvedGrid);
+        return solve_sudoku(s, row, col + 1, solvedGrid);
     }
     // Try to insert a number
     for (int num = 1; num < 9 + 1; num++)
@@ -70,7 +70,7 @@ bool solve(std::vector<std::vector< int > > s, int row, int col, std::vector<std
         if (checkPlace(s, row, col, num))
         {
             s[row][col] = num; // insert num if place is safe
-            if (solve(s, row, col + 1, solvedGrid))
+            if (solve_sudoku(s, row, col + 1, solvedGrid))
             {
                 return true;
             }

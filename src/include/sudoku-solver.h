@@ -8,6 +8,6 @@ void print_sudoku(std::vector<std::vector< int > > s);
 
 bool checkPlace(std::vector<std::vector< int > > s, int row, int col, int num);
 
-bool solve(std::vector<std::vector< int > > s, int row, int col, std::vector<std::vector< int > > &solvedGrid);
+bool solve_sudoku(std::vector<std::vector< int > > s, int row, int col, std::vector<std::vector< int > > &solvedGrid);
 
 #endif /*__SUDOKU_FUNCTIONS__*/
