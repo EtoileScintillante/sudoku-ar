@@ -62,7 +62,8 @@ Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
 }
 
 // Sort points from top left (tl), top right (tr), bottom left (bl), bottom right (br)
-std::vector<Point> sortPoints(std::vector<Point> corners)
+// Assumption: only 4 points in vector
+std::vector<Point> sortPoints4(std::vector<Point> corners)
 {
     std::vector<Point> sorted;
 
@@ -223,8 +224,6 @@ std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector <
     Mat thresh;
     cvtColor(src, thresh, COLOR_BGR2GRAY);
     adaptiveThreshold(thresh, thresh, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 57, 5);
-    imshow("test", thresh);
-    waitKey(0);
 
     // Create vector to store the sudoku grid
     std::vector< std::vector<int > > grid;
@@ -265,4 +264,108 @@ std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector <
     }
 
     return grid;
+}
+
+// This function detects the joints between the horizontal and vertical lines of the grid
+// And returns a vector of points containing a point for every joint
+// In total there will be 100 points
+std::vector< Point > extractJoints(Mat source)
+{
+    Mat gray, bw;
+    cvtColor(source, gray, COLOR_BGR2GRAY);
+    adaptiveThreshold(~gray, bw, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+
+    // Create the images that we will use to extract the horizontal and vertical lines
+    Mat horizontal = bw.clone();
+    Mat vertical = bw.clone();
+
+    int scale = 15; // Play with this variable in order to increase/decrease the amount of lines to be detected
+
+    // Specify size on horizontal axis
+    int horizontalsize = horizontal.cols / scale;
+
+    // Create structure element for extracting horizontal lines through morphology operations
+    Mat horizontalStructure = getStructuringElement(MORPH_RECT, Size(horizontalsize,1));
+
+    // Apply morphology operations
+    erode(horizontal, horizontal, horizontalStructure, Point(-1, -1));
+    dilate(horizontal, horizontal, horizontalStructure, Point(-1, -1));
+
+    // Specify size on vertical axis
+    int verticalsize = vertical.rows / scale;
+
+    // Create structure element for extracting vertical lines through morphology operations
+    Mat verticalStructure = getStructuringElement(MORPH_RECT, Size( 1,verticalsize));
+
+    // Apply morphology operations
+    erode(vertical, vertical, verticalStructure, Point(-1, -1));
+    dilate(vertical, vertical, verticalStructure, Point(-1, -1));
+
+    // Create a mask which includes the grid
+    Mat mask = horizontal + vertical;
+
+    // Find the joints between the lines of the grid
+    Mat joints;
+    bitwise_and(horizontal, vertical, joints);
+
+    std::vector < Point > vec; // vector to store the points of the joints
+    std::vector< Vec4i > hierarchy;
+    std::vector< std::vector< Point> > contours;
+    cv::findContours(joints, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+    for (int i = 0; i < contours.size(); i++)
+    {
+        // The contours found will, if everything goes right, look like little dots on the source image
+        drawContours(source, contours, i, Scalar(255,0,0), 2, 8);
+        vec.push_back(contours[i][0]);  // Since the contours are dots, all the points are really close to each other
+                                        // which is why we just take the first point
+    }
+
+    return vec;
+}
+
+// Sort points from left to right (used in sortPoints function)
+bool sortPointsLeftToRight(Point a, Point b)
+{
+    return (a.x < b.x);
+}
+
+// Sort vector of points from top to bottom and left to right
+std::vector< Point > sortPoints100(std::vector< Point > pVec)
+{
+    // Reverse vector to sort the points from top to bottom
+    reverse(pVec.begin(), pVec.end());
+
+    // Now to sort them from left to right
+    std::vector < Point > sortedPoints;
+    std::vector < Point > temp;
+    int row = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        // Use temp vector to store one row (9 vector<Point>) and sort these
+        temp.clear();
+        for (int j = 0; j < 10; j++)
+        {
+            temp.push_back(pVec[row+j]);
+        }
+        std::sort(temp.begin(), temp.end(), sortPointsLeftToRight);
+        // Push sorted vector<Point> back to sortedCells
+        for (int k = 0; k < 10; k++)
+        {
+            sortedPoints.push_back(temp[k]);
+        }
+        row += 10; // Move to next row
+
+    }
+
+    return sortedPoints;
+}
+
+// Display solution on source image
+// First vector is the solution (containing no empty cells)
+// Second vector is the one containing the original detected grid (with empty cells)
+// Third vector is the one containing the 100 joint points
+void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < Point> vp)
+{
+    //TODO
 }
