@@ -13,7 +13,8 @@ std::vector<Point> detectGrid(Mat image);
 Mat cropGrid(std::vector<Point> corners, Mat sourceIMG);
 
 // Sort points from top left (tl), top right (tr), bottom left (bl), bottom right (br)
-std::vector<Point> sortPoints(std::vector<Point> corners);
+// Assumption: only 4 points in vector
+std::vector<Point> sortPoints4(std::vector<Point> corners);
 
 // Returns a binary image with the lines of the grid in white and 
 // and everything within the lines is black
@@ -34,5 +35,22 @@ std::vector< std::vector < Point > > sortCells(std::vector< std::vector < Point 
 // Input image must be image obtained from cropGrid function
 // Empty cell = 0
 std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector < Point > > sortedCells, Ptr<ml::KNearest> knn);
+
+// This function detects the joints between the horizontal and vertical lines of the grid
+// And returns a vector of points containing a point for every joint
+// In total there will be 100 points
+std::vector< Point > extractJoints(Mat source);
+
+// Sort points from left to right (used in sortPoints function)
+bool sortPointsLeftToRight(Point a, Point b);
+
+// Sort vector of points from top to bottom and left to right
+std::vector< Point > sortPoints100(std::vector< Point > pVec);
+
+// Display solution on source image
+// First vector is the solution (containing no empty cells)
+// Second vector is the one containing the original detected grid (with empty cells)
+// Third vector is the one containing the 100 joint points
+void displaySolution(Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < Point> vp);
 
 #endif /*__SUDOKU_PROCESSING__*/
