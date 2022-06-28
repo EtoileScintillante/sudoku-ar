@@ -1,4 +1,5 @@
 #include "sudoku-processing.h"
+#include "sudoku-solver.h"
 
 int main(int argc, char* argv[])
 {
@@ -55,29 +56,46 @@ int main(int argc, char* argv[])
     std::vector< std::vector< int > > gridOG;
     gridOG = ImageToVec(cropped, contoursCells, knn);
 
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            std::cout << gridOG[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
+    // Print detected grid
+    std::cout << "Detected grid: " << std::endl;
+    print_sudoku(gridOG); 
 
     /// EXTRACT JOINTS FROM GRID ///
     Mat points = src.clone();
     std::vector< Point > jointPoints;
     jointPoints = extractJoints(src.clone());
-    jointPoints = sortPoints100(jointPoints);
-    for (int i = 0; i < jointPoints.size(); i++)
-    {
-        char digit[7];
-        sprintf(digit, "%d", i);
-        putText(points, digit, jointPoints[i], 0, 0.7, Scalar(230, 64, 64), 2); // Draw digit on image
-    }
+    std::vector< std::vector< Point > > pointsSorted = sortPoints100(jointPoints);
 
+    // Number the points and draw them
+    int row = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            char digit[7];
+            sprintf(digit, "%d", j + row);
+            putText(points, digit, pointsSorted[i][j], 0, 0.7, Scalar(230, 64, 64), 2); 
+        }
+        row+=10;
+    }
     imshow("Joints of grid with number", points);
     waitKey(0);
+
+    /// DISPLAY SOLUTION ///
+    std::vector< std::vector< int > > gridSOLVED;
+    if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
+    {
+        displaySolution(src, gridSOLVED, gridOG, pointsSorted);
+    }
+    else
+    {
+        std::cout << "No solution found :(" << std::endl;
+    }
+
+    imshow("SOLVED", src);
+    waitKey(0);
+
     
+
     return 0;
 }
