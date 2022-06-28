@@ -7,18 +7,22 @@ int main(int argc, char* argv[])
     Mat src;
     namedWindow("Display window");
     VideoCapture cap(0);
-    cap.set(10,150);
 
     bool solved = false;
     bool gridDetected = false;
     bool cellsFound = false;
     bool gridConverted = false;
 
-    Mat cropped;
-    std::vector< std::vector < Point > > contoursCells; // Hold all the 81 cells
+    Mat cropped; // This will be a cropped image of the sudoku grid
+    std::vector< std::vector < Point > > contoursCells; // Holds all the 81 cell contours
     std::vector< Point > gridContour; // Holds 4 corners of the grid
     std::vector< std::vector< int > > gridOG; // Original grid
     std::vector< std::vector< int > > gridSOLVED; // Solved grid
+
+    // Taking an image the moment the camera boots up leads to a very low light image
+    // on which the grid is nearly invisible
+    // To prevent this we create some lag so that the camera can catch enough light
+    int lag = 0;
 
     /// Load data and train KNN model ///
     Ptr<ml::KNearest> knn = cv::ml::KNearest::create();
@@ -44,95 +48,104 @@ int main(int argc, char* argv[])
     /// Video loop ///
     while (true) 
     {
+        lag++;
         cap >> src;
-        if (solved == false)
+        if (lag > 30)
         {
-            imshow("Display window", src);
-
-            if (gridDetected == false)
+            if (solved == false)
             {
-                std::cout << "here" << std::endl;
-                /// Detect grid ///
-                Mat srcCopy = src.clone();
-                gridContour = detectGrid(srcCopy);
-                if (gridContour.size() == 4)
-                {   
-                    imwrite("grid.png", srcCopy);
-                    std::cout << "Grid detected" << std::endl;
-                    gridDetected = true;
+                imshow("Display window", src);
+
+                if (gridDetected == false)
+                {
+                    std::cout << "here" << std::endl;
+                    /// Detect grid ///
+                    Mat srcCopy = src.clone();
+                    gridContour = detectGrid(srcCopy);
+                    imwrite("gridContour.png", srcCopy);
+                    if (gridContour.size() == 4)
+                    {   
+                        std::cout << "Grid detected" << std::endl;
+                        gridDetected = true;
+                    }
+                }
+
+                if (gridDetected == true)
+                {
+                    std::cout << "here1" << std::endl;
+                    /// Find cells ///
+                    gridContour = sortPoints4(gridContour);
+                    cropped = cropGrid(gridContour, src);
+                    imwrite("cropped.png", cropped.clone());
+                    std::cout << "image cropped" << std::endl;
+                    Mat noDigs = filterOutDigits(cropped);
+                    imwrite("noDigs.png", noDigs);
+                    Mat cellCnts = cropped.clone();
+                    contoursCells = findCells(noDigs, cellCnts);
+                    imwrite("cellcontours.png", cellCnts);
+                    contoursCells = sortCells(contoursCells);
+                    std::cout << contoursCells.size() << std::endl;
+
+                    if (contoursCells.size() == 81)
+                    {
+                        std::cout << "Cells found" << std::endl;
+                        cellsFound = true;
+                        gridDetected = false;
+                    }
+                }
+
+                if (cellsFound == true)
+                {
+                    std::cout << "here2" << std::endl;
+                    /// Recognize digits ///
+                    std::cout << contoursCells.size() <<std::endl;
+                    gridOG = ImageToVec(cropped, contoursCells, knn);
+                    if (gridOG.size() == 9)
+                    {
+                        std::cout << "Image of grid converted to vector" << std::endl;
+                        gridConverted = true;
+                        cellsFound = false;
+                    }
+                }
+                
+                if (gridConverted == true)
+                {
+                    std::cout << "here3" << std::endl;
+                    /// Try to solve sudoku ///
+                    if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
+                    {
+                        std::cout << "Solution found!" << std::endl;
+                        print_sudoku(gridSOLVED);
+                        solved = true;
+                        gridConverted = false;
+                    }
                 }
             }
-
-            if (gridDetected == true)
+            else // If solution has been found
             {
-                std::cout << "here1" << std::endl;
-                /// Find cells ///
-                gridContour = sortPoints4(gridContour);
-                cropped = cropGrid(gridContour, src);
-                imwrite("cropped.png", cropped.clone());
-                 std::cout << "image cropped" << std::endl;
-                Mat noDigs = filterOutDigits(cropped);
-                imwrite("noDigs.png", noDigs);
-                Mat cellCnts = cropped.clone();
-                std::vector< std::vector < Point > > contoursCells = findCells(noDigs, cellCnts);
-                imwrite("cellcontours.png", cellCnts);
-                contoursCells = sortCells(contoursCells);
-                std::cout << contoursCells.size() << std::endl;
+                std::cout << "here4" << std::endl;
+                /// Extract joints from grid ///
+                Mat points = src.clone();
+                std::vector< Point > jointPoints;
+                jointPoints = extractJoints(src.clone());
 
-                if (contoursCells.size() == 81)
+                if (jointPoints.size() == 100) 
                 {
-                    std::cout << "Cells found" << std::endl;
-                    cellsFound = true;
-                    gridDetected = false;
-                }
-            }
-
-            if (cellsFound == true)
-            {
-                std::cout << "here2" << std::endl;
-                /// Recognize digits ///
-                gridOG = ImageToVec(cropped, contoursCells, knn);
-                if (gridOG.size() == 9)
-                {
-                    std::cout << "Image of grid converted to vector" << std::endl;
-                    gridConverted = true;
-                    cellsFound = false;
-                }
+                    /// Display solution ///
+                    std::vector< std::vector< Point > > pointsSorted = sortPoints100(jointPoints);
+                    Mat solutionimg = displaySolution(src, gridSOLVED, gridOG, pointsSorted);
+                    imwrite("solution1.png", solutionimg);
+                    imshow("Display window", src);
+                } 
             }
             
-            if (gridConverted == true)
-            {
-                std::cout << "here3" << std::endl;
-                /// Try to solve sudoku ///
-                if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
-                {
-                    std::cout << "Solution found!" << std::endl;
-                    print_sudoku(gridSOLVED);
-                    solved = true;
-                    gridConverted = false;
-                }
-            }
+            // Press  ESC on keyboard to exit
+            if (waitKey(5) == 27) break;
         }
-        else // If solution has been found
-        {
-            std::cout << "here4" << std::endl;
-            /// Extract joints from grid ///
-            Mat points = src.clone();
-            std::vector< Point > jointPoints;
-            jointPoints = extractJoints(src.clone());
-
-            if (jointPoints.size() == 100) 
-            {
-                /// Display solution ///
-                std::vector< std::vector< Point > > pointsSorted = sortPoints100(jointPoints);
-                displaySolution(src, gridSOLVED, gridOG, pointsSorted);
-                imshow("Display window", src);
-            } 
-        }
-        
-        if (waitKey(10) >= 0)
-            break;
     }
+
+    cap.release();
+    destroyAllWindows();
 
     return 0;
 }
