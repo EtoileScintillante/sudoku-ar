@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     waitKey(0);
 
     /// CROP IMAGE ///
-    gridContour = sortPoints(gridContour);
+    gridContour = sortPoints4(gridContour);
     Mat cropped = cropGrid(gridContour, src);
     imshow("Cropped image", cropped);
     waitKey(0);
@@ -64,5 +64,20 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 
+    /// EXTRACT JOINTS FROM GRID ///
+    Mat points = src.clone();
+    std::vector< Point > jointPoints;
+    jointPoints = extractJoints(src.clone());
+    jointPoints = sortPoints100(jointPoints);
+    for (int i = 0; i < jointPoints.size(); i++)
+    {
+        char digit[7];
+        sprintf(digit, "%d", i);
+        putText(points, digit, jointPoints[i], 0, 0.7, Scalar(230, 64, 64), 2); // Draw digit on image
+    }
+
+    imshow("Joints of grid with number", points);
+    waitKey(0);
+    
     return 0;
 }
