@@ -292,7 +292,7 @@ Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< 
         }
         rowCount+=9; // Move to next row
     }
-    imwrite("mask.png", mask);
+    //imwrite("mask.png", mask); // save image
 
     return mask;
 }
@@ -319,7 +319,7 @@ Mat showSolution(std::vector< Point > corners, Mat source, Mat mask)
     Mat warp_mat = getAffineTransform(srcp, dest);
     Mat warp_dst = Mat::zeros(source.rows, source.cols, source.type());
     warpAffine(mask, warp_dst, warp_mat, source.size());
-    imwrite("maskWarped.png", warp_dst);
+    //imwrite("maskWarped.png", warp_dst); // Save image
     
     Mat dst;
     addWeighted(source, 0.5, warp_dst, 0.5, 0.0, dst); // Blend mask and source together
