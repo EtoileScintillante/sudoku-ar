@@ -2,6 +2,9 @@
 #include "sudoku-solver.h"
 using namespace cv;
 
+/* Note: the following code contains print statements with ANSI colour codes.
+Not all terminals support this. */
+
 int main(int argc, char* argv[])
 {
     Mat src; 
@@ -26,6 +29,7 @@ int main(int argc, char* argv[])
 
     /// Load data and train KNN model ///
     Ptr<ml::KNearest> knn = cv::ml::KNearest::create();
+    std::cout << "\033[1;33m Training KNN model...\033[0m\n";
 
     Mat sample;
     Mat response,tmp;
@@ -38,7 +42,7 @@ int main(int argc, char* argv[])
     Label.release();
 
     knn->train(sample,ml::ROW_SAMPLE, response); // Train with sample and responses
-    std::cout << "Training of KNN model completed" << std::endl;
+    std::cout << "\033[1;32m Training of KNN model completed! \033[0m\n";
 
     if (!cap.isOpened()) 
     {
@@ -54,20 +58,19 @@ int main(int argc, char* argv[])
 
         if (lag > 30)
         {
-            std::cout << "Trying to detect grid..." << std::endl;
-
             if (solved == false)
             {
 
                 if (gridDetected == false)
                 {
                     /// Detect grid ///
+                    std::cout << "\033[1;33m Trying to detect grid...\033[0m\n";
                     Mat srcCopy = src.clone();
                     gridContour = detectGrid(srcCopy);
                     //imwrite("gridContour.png", srcCopy); // Save image
                     if (gridContour.size() == 4)
                     {   
-                        std::cout << "Grid detected" << std::endl;
+                        std::cout << "\033[1;32m Grid detected!\033[0m\n";
                         gridDetected = true;
                     }
                 }
@@ -75,7 +78,7 @@ int main(int argc, char* argv[])
                 if (gridDetected == true)
                 {
                     /// Find cells ///
-                    std::cout << "Trying to detect cells..." << std::endl;
+                    std::cout << "\033[1;33m Trying to detect cells of the grid...\033[0m\n";
                     gridContour = sortPoints4(gridContour);
                     cropped = cropGrid(gridContour, src);
                     //imwrite("cropped.png", cropped.clone());  // Save image
@@ -88,7 +91,7 @@ int main(int argc, char* argv[])
 
                     if (contoursCells.size() == 81)
                     {
-                        std::cout << "Cells found" << std::endl;
+                        std::cout << "\033[1;32m Cells found!\033[0m\n";
                         cellsFound = true;
                         gridDetected = false;
                     }
@@ -97,11 +100,11 @@ int main(int argc, char* argv[])
                 if (cellsFound == true)
                 {
                     /// Recognize digits ///
-                    std::cout << "Rcognizing digits..." <<std::endl;
+                    std::cout << "\033[1;33m Trying to recognize digits...\033[0m\n";
                     gridOG = ImageToVec(cropped, contoursCells, knn);
                     if (gridOG.size() == 9)
                     {
-                        std::cout << "Image of grid converted to vector" << std::endl;
+                        std::cout << "\033[1;32m Image of grid converted to 2d vector!\033[0m\n";
                         gridConverted = true;
                         cellsFound = false;
                     }
@@ -110,10 +113,10 @@ int main(int argc, char* argv[])
                 if (gridConverted == true)
                 {
                     /// Try to solve sudoku ///
-                    std::cout << "Solving sudoku..." << std::endl;
+                    std::cout << "\033[1;33m Trying to solve the sudoku...\033[0m\n";
                     if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
                     {
-                        std::cout << "Solution found!" << std::endl;
+                        std::cout << "\033[1;32m Solution found!\033[0m\n";
                         print_sudoku(gridSOLVED);
                         solved = true;
                         gridConverted = false;
