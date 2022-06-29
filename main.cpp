@@ -76,14 +76,12 @@ int main(int argc, char* argv[])
                     gridContour = sortPoints4(gridContour);
                     cropped = cropGrid(gridContour, src);
                     imwrite("cropped.png", cropped.clone());
-                    std::cout << "image cropped" << std::endl;
                     Mat noDigs = filterOutDigits(cropped);
                     imwrite("noDigits.png", noDigs);
                     Mat cellCnts = cropped.clone();
                     contoursCells = findCells(noDigs, cellCnts);
                     imwrite("cellContours.png", cellCnts);
                     contoursCells = sortCells(contoursCells);
-                    std::cout << contoursCells.size() << std::endl;
 
                     if (contoursCells.size() == 81)
                     {
@@ -109,6 +107,7 @@ int main(int argc, char* argv[])
                 if (gridConverted == true)
                 {
                     /// Try to solve sudoku ///
+                    std::cout << "Solving sudoku..." << std::endl;
                     if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
                     {
                         std::cout << "Solution found!" << std::endl;
@@ -130,7 +129,7 @@ int main(int argc, char* argv[])
                 Mat mask = createMask(contoursCells, gridSOLVED, gridOG);
                 Mat result = showSolution(gridContour, src, mask);
                 imwrite("result.png", result);
-                imshow("Display window", result);
+                imshow("Display window", result); // Show result
             }
             
             // Press  ESC on keyboard to exit
