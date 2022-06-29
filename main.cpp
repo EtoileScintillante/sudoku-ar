@@ -54,6 +54,8 @@ int main(int argc, char* argv[])
 
         if (lag > 30)
         {
+            std::cout << "Trying to detect grid..." << std::endl;
+
             if (solved == false)
             {
 
@@ -73,6 +75,7 @@ int main(int argc, char* argv[])
                 if (gridDetected == true)
                 {
                     /// Find cells ///
+                    std::cout << "Trying to detect cells..." << std::endl;
                     gridContour = sortPoints4(gridContour);
                     cropped = cropGrid(gridContour, src);
                     //imwrite("cropped.png", cropped.clone());  // Save image
