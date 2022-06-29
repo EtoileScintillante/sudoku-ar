@@ -36,28 +36,14 @@ std::vector< std::vector < Point > > sortCells(std::vector< std::vector < Point 
 // Empty cell = 0
 std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector < Point > > sortedCells, Ptr<ml::KNearest> knn);
 
-// This function detects the joints between the horizontal and vertical lines of the grid
-// And returns a vector of points containing a point for every joint
-// In total there will be 100 points
-std::vector< Point > extractJoints(Mat source);
-
-// Sort points from left to right (used in sortPoints function)
-bool sortPointsLeftToRight(Point a, Point b);
-
-// Sort vector of points from top to bottom and left to right
-std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec);
-
-// Calculates the position of the digits (used in displaySolution)
-// Assumption: vector must contain 3 points
-Point calculatePos(std::vector< Point > vp);
-
 // This function creates a mask which will overlay the sudoku grid in the source image (image captured by webcam/camera)
 // The vector contoursCells contains all the 81 contours of the cells, the vector solution contains the grid of the solved sudoku
 // And the vector original contains the grid of the original sudoku (with empty cells)
 Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original);
 
 // This functions overlays the mask (obtained from createMask) on the source image
-// To do that it needs the corner coordinates of the grid on the source image (which is why we need to pass in gridContour)
-void showSolution(std::vector< Point > gridContour, Mat &source, Mat mask);
+// To do that it needs the corner coordinates of the grid on the source image
+// which is why we need to pass in vector containing these corners
+Mat showSolution(std::vector< Point > corners, Mat source, Mat mask);
 
 #endif /*__SUDOKU_PROCESSING__*/

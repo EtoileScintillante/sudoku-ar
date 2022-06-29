@@ -220,34 +220,28 @@ std::vector< std::vector < Point > > sortCells(std::vector< std::vector < Point 
 // Empty cell = 0
 std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector < Point > > sortedCells, Ptr<ml::KNearest> knn)
 {
-    std::cout << "In ImageToVec function at the top" << std::endl;
     // Prep image
     Mat thresh;
     cvtColor(src, thresh, COLOR_BGR2GRAY);
     adaptiveThreshold(thresh, thresh, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 57, 5);
-    std::cout << "In ImageToVec function after applying thresh" << std::endl;
+
     // Create vector to store the sudoku grid
     std::vector< std::vector<int > > grid;
     std::vector< int > gridRow;
     int rowCount = 0;
-    std::cout << "In ImageToVec function after declaring vecs" << std::endl;
+
     // Iterate over sukdoku grid and extract digits using the KNN
     for (int i = 0; i < 9; i++)
     {
-        std::cout << "In ImageToVec function in i loop: " << i << std::endl;
         for (int k = 0; k < 9; k++)
         {
-            std::cout << "In ImageToVec function in k loop: " << k << std::endl;
-            std::cout << sortedCells.size() <<std::endl;
             Rect r = boundingRect(sortedCells[k + rowCount]);
             Mat ROI = thresh(r); // Create image of individual cell
             std::vector< std::vector < Point > > ROIcontours;
             int num = 0;
             findContours(ROI, ROIcontours, RETR_TREE, CHAIN_APPROX_SIMPLE); // Find contours of cell image
-            std::cout << "In ImageToVec function after finding contours: " << k << std::endl;
             for (int j = 0; j < ROIcontours.size(); j++)
             {
-                std::cout << "In ImageToVec function in j loop: " << j << std::endl;
                 double area = contourArea(ROIcontours[j]);
                 if (area > 220) // If there is a digit in the cell
                 {
@@ -269,104 +263,6 @@ std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector <
     }
 
     return grid;
-}
-
-// This function detects the joints between the horizontal and vertical lines of the grid
-// And returns a vector of points containing a point for every joint
-// In total there will be 100 points
-std::vector< Point > extractJoints(Mat source)
-{
-    Mat gray, bw;
-    cvtColor(source, gray, COLOR_BGR2GRAY);
-    adaptiveThreshold(~gray, bw, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
-
-    // Create the images that we will use to extract the horizontal and vertical lines
-    Mat horizontal = bw.clone();
-    Mat vertical = bw.clone();
-
-    int scale = 15; // Play with this variable in order to increase/decrease the amount of lines to be detected
-
-    // Specify size on horizontal axis
-    int horizontalsize = horizontal.cols / scale;
-
-    // Create structure element for extracting horizontal lines through morphology operations
-    Mat horizontalStructure = getStructuringElement(MORPH_RECT, Size(horizontalsize,1));
-
-    // Apply morphology operations
-    erode(horizontal, horizontal, horizontalStructure, Point(-1, -1));
-    dilate(horizontal, horizontal, horizontalStructure, Point(-1, -1));
-
-    // Specify size on vertical axis
-    int verticalsize = vertical.rows / scale;
-
-    // Create structure element for extracting vertical lines through morphology operations
-    Mat verticalStructure = getStructuringElement(MORPH_RECT, Size( 1,verticalsize));
-
-    // Apply morphology operations
-    erode(vertical, vertical, verticalStructure, Point(-1, -1));
-    dilate(vertical, vertical, verticalStructure, Point(-1, -1));
-
-    // Create a mask which includes the grid
-    Mat mask = horizontal + vertical;
-    imwrite("Mask.png", mask);
-
-    // Find the joints between the lines of the grid
-    Mat joints;
-    bitwise_and(horizontal, vertical, joints);
-    imwrite("Joints.png", joints);
-
-    std::vector < Point > vec; // vector to store the points of the joints
-    std::vector< Vec4i > hierarchy;
-    std::vector< std::vector< Point> > contours;
-    cv::findContours(joints, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
-
-    for (int i = 0; i < contours.size(); i++)
-    {
-        // The contours found will, if everything goes right, look like little dots on the source image
-        drawContours(source, contours, i, Scalar(255,0,0), 2, 8);
-        vec.push_back(contours[i][0]);  // Since the contours are dots, all the points are really close to each other
-                                        // which is why we just take the first point
-    }
-
-    return vec;
-}
-
-// Sort points from left to right (used in sortPoints function)
-bool sortPointsLeftToRight(Point a, Point b)
-{
-    return (a.x < b.x);
-}
-
-// Sort vector of points from top to bottom and left to right
-std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec)
-{
-    // Reverse vector to sort the points from top to bottom
-    reverse(pVec.begin(), pVec.end());
-
-    // Now to sort them from left to right
-    std::vector < std::vector<Point > > sortedPoints;
-    std::vector < Point > temp;
-    int row = 0;
-    for (int i = 0; i < 10; i++)
-    {
-        // Use temp vector to store one row (9 vector<Point>) and sort these
-        temp.clear();
-        for (int j = 0; j < 10; j++)
-        {
-            temp.push_back(pVec[row+j]);
-        }
-        std::sort(temp.begin(), temp.end(), sortPointsLeftToRight);
-        // Push sorted vector<Point> back to sortedCells
-        /*for (int k = 0; k < 10; k++)
-        {
-            sortedPoints.push_back(temp[k]);
-        */
-        sortedPoints.push_back(temp);
-        row += 10; // Move to next row
-
-    }
-
-    return sortedPoints;
 }
 
 // This function creates a mask which will overlay the sudoku grid in the source image (image captured by webcam/camera)
@@ -396,14 +292,37 @@ Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< 
         }
         rowCount+=9; // Move to next row
     }
-    imwrite("Mask.png", mask);
+    imwrite("mask.png", mask);
 
     return mask;
 }
 
 // This functions overlays the mask (obtained from createMask) on the source image
-// To do that it needs the corner coordinates of the grid on the source image (which is why we need to pass in gridContour)
-void showSolution(std::vector< Point > gridContour, Mat &source, Mat mask)
+// To do that it needs the corner coordinates of the grid on the source image
+// which is why we need to pass in the vector containing these corners
+Mat showSolution(std::vector< Point > corners, Mat source, Mat mask)
 {
+
+    // These points belong to the mask
+    Point2f srcp[3];
+    srcp[0] = Point(0, 0); 
+    srcp[1] = Point(640, 0); 
+    srcp[2] = Point(0, 640); 
     
+    // These points belong to the sudoku grid on the source image
+    Point2f dest[3];
+    dest[0] = corners[0]; 
+    dest[1] = corners[1]; 
+    dest[2] = corners[2];
+
+    // Here we put the mask on the right place (but the background is still black)
+    Mat warp_mat = getAffineTransform(srcp, dest);
+    Mat warp_dst = Mat::zeros(source.rows, source.cols, source.type());
+    warpAffine(mask, warp_dst, warp_mat, source.size());
+    imwrite("maskWarped.png", warp_dst);
+    
+    Mat dst;
+    addWeighted(source, 0.5, warp_dst, 0.5, 0.0, dst); // Blend mask and source together
+
+    return dst;
 }
