@@ -369,60 +369,12 @@ std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec)
     return sortedPoints;
 }
 
-// Calculates the position of the digits (used in displaySolution)
-// Assumption: vector must contain 3 points
-Point calculatePos(std::vector< Point > vp)
+// This function creates a mask which will overlay the sudoku grid in the source image (image captured by webcam/camera)
+// The vector contoursCells contains all the 81 contours of the cells, the vector solution contains the grid of the solved sudoku
+// And the vector original contains the grid of the original sudoku (with empty cells)
+Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original)
 {
-    Point pos;
-    int posx = (vp[0].x + vp[1].x) / 2; // (top left x + top right x) / 2
-    int posy = (vp[0].y + vp[2].y) / 2; // (top left y + bottom left 7) / 2
-    pos.x = posx;
-    pos.y = posy;
-
-    return pos;
-}
-
-// Display solution on source image
-// First vector is the solution (containing no empty cells)
-// Second vector is the one containing the original detected grid (with empty cells)
-// Third vector is the one containing the 100 joint points
-Mat displaySolution(Mat source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < std::vector< Point> > vp)
-{
-    int row = 0;
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            // Every grid cell is surrounded by 4 points
-            // 3 of these points will be stored in temp and passed to calculatePos to obtain
-            // the x and y coordinates of where the digit needs to be drawn
-            if (original[i][j] == 0) // Only fill in the empty cells
-            {
-                std::vector< Point > temp;
-                temp.push_back(vp[i][j]); // Top left point of cell
-                temp.push_back(vp[i][j + 1]); // Top right point of cell
-                temp.push_back(vp[i + 1][j]); // Bottom left point of cell
-                Point pos = calculatePos(temp);
-                char digit[7];
-                sprintf(digit, "%d", solution[i][j]);
-                putText(source, digit, pos, 0, 0.7, Scalar(44, 125, 49), 2);
-            }
-            else
-            {
-                continue;
-            }
-
-        }  
-    }
-    return source;
-}
-
-void showSolution(std::vector< Point > gridContour, std::vector< std::vector < Point > > contoursCells, Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original)
-{
-    // Create rect around contours of the grid
-    Rect grid = boundingRect(gridContour);
-
-    // Mask is size as cropped image of grid
+    // Mask is same size as cropped image of grid
     Mat mask = Mat::zeros(Size(640,640), CV_8UC3);
 
     // Now we need to place the digits on the mask
@@ -446,5 +398,12 @@ void showSolution(std::vector< Point > gridContour, std::vector< std::vector < P
     }
     imwrite("Mask.png", mask);
 
-    // Next we need to overlay the mask on the source image
+    return mask;
+}
+
+// This functions overlays the mask (obtained from createMask) on the source image
+// To do that it needs the corner coordinates of the grid on the source image (which is why we need to pass in gridContour)
+void showSolution(std::vector< Point > gridContour, Mat &source, Mat mask)
+{
+    
 }

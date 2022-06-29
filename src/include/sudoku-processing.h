@@ -51,12 +51,13 @@ std::vector< std::vector< Point > > sortPoints100(std::vector< Point > pVec);
 // Assumption: vector must contain 3 points
 Point calculatePos(std::vector< Point > vp);
 
-// Display solution on source image
-// First vector is the solution (containing no empty cells)
-// Second vector is the one containing the original detected grid (with empty cells)
-// Third vector is the one containing the 100 joint points
-Mat displaySolution(Mat source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < std::vector< Point> > vp);
+// This function creates a mask which will overlay the sudoku grid in the source image (image captured by webcam/camera)
+// The vector contoursCells contains all the 81 contours of the cells, the vector solution contains the grid of the solved sudoku
+// And the vector original contains the grid of the original sudoku (with empty cells)
+Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original);
 
-void showSolution(std::vector< Point > gridContour, std::vector< std::vector < Point > > contoursCells, Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original);
+// This functions overlays the mask (obtained from createMask) on the source image
+// To do that it needs the corner coordinates of the grid on the source image (which is why we need to pass in gridContour)
+void showSolution(std::vector< Point > gridContour, Mat &source, Mat mask);
 
 #endif /*__SUDOKU_PROCESSING__*/
