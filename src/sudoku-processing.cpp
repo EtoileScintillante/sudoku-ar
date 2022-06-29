@@ -417,7 +417,34 @@ Mat displaySolution(Mat source, std::vector< std::vector< int > > solution, std:
     return source;
 }
 
-void showSolution()
+void showSolution(std::vector< Point > gridContour, std::vector< std::vector < Point > > contoursCells, Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original)
 {
-    //TODO
+    // Create rect around contours of the grid
+    Rect grid = boundingRect(gridContour);
+
+    // Mask is size as cropped image of grid
+    Mat mask = Mat::zeros(Size(640,640), CV_8UC3);
+
+    // Now we need to place the digits on the mask
+    int rowCount = 0;
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (original[i][j] == 0) // Only draw digits of cells that were orginally empty
+            {
+                Rect r = boundingRect(contoursCells[j + rowCount]); // Create rect
+                int xCor = (r.width / 2) + r.x - 20; // Calculate the x and y coordinates of the digit
+                int yCor = (r.height / 2) + r.y + 13; 
+                int num = solution[i][j];
+                char digit[7];
+                sprintf(digit, "%d", num);
+                putText(mask, digit, Point(xCor, yCor), 0, 1.0, Scalar(44, 125, 49), 2); // Draw digit on image
+            }
+        }
+        rowCount+=9; // Move to next row
+    }
+    imwrite("Mask.png", mask);
+
+    // Next we need to overlay the mask on the source image
 }

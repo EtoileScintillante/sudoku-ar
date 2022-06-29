@@ -57,6 +57,6 @@ Point calculatePos(std::vector< Point > vp);
 // Third vector is the one containing the 100 joint points
 Mat displaySolution(Mat source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original, std::vector < std::vector< Point> > vp);
 
-void showSolution();
+void showSolution(std::vector< Point > gridContour, std::vector< std::vector < Point > > contoursCells, Mat &source, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original);
 
 #endif /*__SUDOKU_PROCESSING__*/
