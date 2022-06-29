@@ -4,7 +4,7 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
-    Mat src;
+    Mat src; 
     namedWindow("Display window");
     VideoCapture cap(0);
 
@@ -15,13 +15,13 @@ int main(int argc, char* argv[])
 
     Mat cropped; // This will be a cropped image of the sudoku grid
     std::vector< std::vector < Point > > contoursCells; // Holds all the 81 cell contours
-    std::vector< Point > gridContour; // Holds 4 corners of the grid
+    std::vector< Point > gridContour; // Holds the 4 corners of the grid
     std::vector< std::vector< int > > gridOG; // Original grid
     std::vector< std::vector< int > > gridSOLVED; // Solved grid
 
-    // Taking an image the moment the camera boots up leads to a very low light image
-    // on which the grid is nearly invisible
-    // To prevent this we create some lag so that the camera can catch enough light
+    /* Taking an image the moment the camera opens leads to a very low light image
+    on which the grid is nearly invisible.
+    To prevent this we create some lag so that the camera can catch enough light */
     int lag = 0;
 
     /// Load data and train KNN model ///
@@ -50,19 +50,19 @@ int main(int argc, char* argv[])
     {
         lag++;
         cap >> src;
-        //imshow("Display window", src);
+        imshow("Display window", src);
+
         if (lag > 30)
         {
             if (solved == false)
             {
-                imshow("Display window", src);
 
                 if (gridDetected == false)
                 {
                     /// Detect grid ///
                     Mat srcCopy = src.clone();
                     gridContour = detectGrid(srcCopy);
-                    imwrite("gridContour.png", srcCopy);
+                    //imwrite("gridContour.png", srcCopy); // Save image
                     if (gridContour.size() == 4)
                     {   
                         std::cout << "Grid detected" << std::endl;
@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
                     /// Find cells ///
                     gridContour = sortPoints4(gridContour);
                     cropped = cropGrid(gridContour, src);
-                    imwrite("cropped.png", cropped.clone());
+                    //imwrite("cropped.png", cropped.clone());  // Save image
                     Mat noDigs = filterOutDigits(cropped);
-                    imwrite("noDigits.png", noDigs);
+                    //imwrite("noDigits.png", noDigs);  // Save image
                     Mat cellCnts = cropped.clone();
                     contoursCells = findCells(noDigs, cellCnts);
-                    imwrite("cellContours.png", cellCnts);
+                    //imwrite("cellContours.png", cellCnts);  // Save image
                     contoursCells = sortCells(contoursCells);
 
                     if (contoursCells.size() == 81)
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
                 if (cellsFound == true)
                 {
                     /// Recognize digits ///
-                    std::cout << contoursCells.size() <<std::endl;
+                    std::cout << "Rcognizing digits..." <<std::endl;
                     gridOG = ImageToVec(cropped, contoursCells, knn);
                     if (gridOG.size() == 9)
                     {
@@ -128,17 +128,16 @@ int main(int argc, char* argv[])
                 gridContour = sortPoints4(gridContour);
                 Mat mask = createMask(contoursCells, gridSOLVED, gridOG);
                 Mat result = showSolution(gridContour, src, mask);
-                imwrite("result.png", result);
-                imshow("Display window", result); // Show result
+                //imwrite("result.png", result);  // Save image
+                imshow("Display window", result);
             }
-            
-            // Press  ESC on keyboard to exit
-            if (waitKey(5) == 27) break;
         }
+
+        // Press  ESC on keyboard to exit
+        if (waitKey(5) == 27) break;
     }
 
     cap.release();
-    destroyAllWindows();
 
     return 0;
 }
