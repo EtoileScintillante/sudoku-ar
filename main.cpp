@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
     {
         lag++;
         cap >> src;
+        //imshow("Display window", src);
         if (lag > 30)
         {
             if (solved == false)
@@ -58,7 +59,6 @@ int main(int argc, char* argv[])
 
                 if (gridDetected == false)
                 {
-                    std::cout << "here" << std::endl;
                     /// Detect grid ///
                     Mat srcCopy = src.clone();
                     gridContour = detectGrid(srcCopy);
@@ -72,17 +72,16 @@ int main(int argc, char* argv[])
 
                 if (gridDetected == true)
                 {
-                    std::cout << "here1" << std::endl;
                     /// Find cells ///
                     gridContour = sortPoints4(gridContour);
                     cropped = cropGrid(gridContour, src);
                     imwrite("cropped.png", cropped.clone());
                     std::cout << "image cropped" << std::endl;
                     Mat noDigs = filterOutDigits(cropped);
-                    imwrite("noDigs.png", noDigs);
+                    imwrite("noDigits.png", noDigs);
                     Mat cellCnts = cropped.clone();
                     contoursCells = findCells(noDigs, cellCnts);
-                    imwrite("cellcontours.png", cellCnts);
+                    imwrite("cellContours.png", cellCnts);
                     contoursCells = sortCells(contoursCells);
                     std::cout << contoursCells.size() << std::endl;
 
@@ -96,7 +95,6 @@ int main(int argc, char* argv[])
 
                 if (cellsFound == true)
                 {
-                    std::cout << "here2" << std::endl;
                     /// Recognize digits ///
                     std::cout << contoursCells.size() <<std::endl;
                     gridOG = ImageToVec(cropped, contoursCells, knn);
@@ -110,7 +108,6 @@ int main(int argc, char* argv[])
                 
                 if (gridConverted == true)
                 {
-                    std::cout << "here3" << std::endl;
                     /// Try to solve sudoku ///
                     if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
                     {
@@ -123,9 +120,17 @@ int main(int argc, char* argv[])
             }
             else // If solution has been found
             {
-                std::cout << "here4" << std::endl;
-                break;
-                //TODO: find new way of showing solution!
+                /*  For the mask to work, we need to constantly find the contours of the grid,
+                since the grid may move a little while capturing the video
+                Holding it still is impossible anyway right? And it is fun if the digits move along with the grid
+                That gives the augmented reality feeling :) */
+                Mat srcClone = src.clone();
+                gridContour = detectGrid(srcClone);
+                gridContour = sortPoints4(gridContour);
+                Mat mask = createMask(contoursCells, gridSOLVED, gridOG);
+                Mat result = showSolution(gridContour, src, mask);
+                imwrite("result.png", result);
+                imshow("Display window", result);
             }
             
             // Press  ESC on keyboard to exit
