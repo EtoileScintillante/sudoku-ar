@@ -1,4 +1,4 @@
-# Sudoku-augmented-reality
+# Sudoku Solver - Augmented Reality
 
 This program solves a sudoku using video capture and displays the solution in real time.
 
