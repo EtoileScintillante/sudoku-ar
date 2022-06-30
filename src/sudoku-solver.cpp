@@ -44,7 +44,6 @@ bool checkPlace(std::vector<std::vector< int > > grid, int row, int col, int num
 }
 
 // This function inserts a num in every cell that has a 0 (i.e. the cell is empty)
-// It is important to pass a grid vector by reference so we can access the digits later to create the output image
 bool solve_sudoku(std::vector<std::vector< int > > grid, int row, int col, std::vector<std::vector< int > > &solvedGrid)
 {
     // Return true and print sudoku if we managed to place a num in every empty cell

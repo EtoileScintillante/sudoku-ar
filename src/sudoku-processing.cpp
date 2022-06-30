@@ -39,7 +39,7 @@ std::vector<Point> detectGrid(Mat image)
 }
 
 // This function takes as input the 4 points corresponding to 4 corners of the grid
-// and it creates a cropped image containing only the grid, top down view
+// and it creates a cropped image containing only the grid
 Mat cropGrid(std::vector<Point> corners, Mat sourceIMG)
 {
     Point2f src_vertices[4];
@@ -266,8 +266,6 @@ std::vector< std::vector< int > > ImageToVec(Mat src, std::vector< std::vector <
 }
 
 // This function creates a mask which will overlay the sudoku grid in the source image (image captured by webcam/camera)
-// The vector contoursCells contains all the 81 contours of the cells, the vector solution contains the grid of the solved sudoku
-// And the vector original contains the grid of the original sudoku (with empty cells)
 Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< std::vector< int > > solution, std::vector< std::vector< int > > original)
 {
     // Mask is same size as cropped image of grid
