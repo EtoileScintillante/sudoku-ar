@@ -36,6 +36,7 @@ bool checkPlace(std::vector<std::vector< int > > grid, int row, int col, int num
  * @param row row number
  * @param col column number
  * @param num digit we want to insert
+ * @param[out] solvedGrid 2d vector containing the solved sudoku
  * @return true if solution to sudoku puzzle is found, false otherwhise.
  */
 bool solve_sudoku(std::vector<std::vector< int > > grid, int row, int col, std::vector<std::vector< int > > &solvedGrid);
