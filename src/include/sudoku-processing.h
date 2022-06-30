@@ -100,6 +100,7 @@ Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< 
  * @param corners sorted vector of points representing the 4 corners of the sudoku grid.
  * @param source image on which we want to overlay the mask
  * @param mask image representing the mask 
+ * @see createMask
  * @return image where the empty cells of the suoku grid contain green digits because of the mask we put over it
  */
 Mat showSolution(std::vector< Point > corners, Mat source, Mat mask);
