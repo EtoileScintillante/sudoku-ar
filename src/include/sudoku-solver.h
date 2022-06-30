@@ -1,3 +1,10 @@
+/*                                  
+ * sudoku-solver.h
+ *
+ * Created on: 29 June 2022
+ * Author: EtoileScintillante
+ */
+
 #ifndef __SUDOKU_FUNCTIONS__
 #define __SUDOKU_FUNCTIONS__
 

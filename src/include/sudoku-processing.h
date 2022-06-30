@@ -1,3 +1,10 @@
+/*                                  
+ * sudoku-processing.h
+ *
+ * Created on: 30 June 2022
+ * Author: EtoileScintillante
+ */
+
 #ifndef __SUDOKU_PROCESSING__
 #define __SUDOKU_PROCESSING__
 
