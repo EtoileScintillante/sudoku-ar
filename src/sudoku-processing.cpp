@@ -285,7 +285,7 @@ Mat createMask(std::vector< std::vector < Point > > contoursCells, std::vector< 
                 int num = solution[i][j];
                 char digit[7];
                 sprintf(digit, "%d", num);
-                putText(mask, digit, Point(xCor, yCor), 0, 1.0, Scalar(44, 125, 49), 2); // Draw digit on image
+                putText(mask, digit, Point(xCor, yCor), 0, 1.0, Scalar(0, 255, 0), 2); // Draw digit on image
             }
         }
         rowCount+=9; // Move to next row
@@ -320,7 +320,7 @@ Mat showSolution(std::vector< Point > corners, Mat source, Mat mask)
     //imwrite("maskWarped.png", warp_dst); // Save image
     
     Mat dst;
-    addWeighted(source, 0.5, warp_dst, 0.5, 0.0, dst); // Blend mask and source together
+    addWeighted(source, 0.7, warp_dst, 0.3, 0.0, dst); // Blend mask and source together
 
     return dst;
 }
