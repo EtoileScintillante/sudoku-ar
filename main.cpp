@@ -93,7 +93,6 @@ int main(int argc, char* argv[])
                     {
                         std::cout << "\033[1;32m Cells found!\033[0m\n";
                         cellsFound = true;
-                        gridDetected = false;
                     }
                 }
 
@@ -106,7 +105,6 @@ int main(int argc, char* argv[])
                     {
                         std::cout << "\033[1;32m Image of grid converted to 2d vector!\033[0m\n";
                         gridConverted = true;
-                        cellsFound = false;
                     }
                 }
                 
@@ -119,7 +117,6 @@ int main(int argc, char* argv[])
                         std::cout << "\033[1;32m Solution found!\033[0m\n";
                         print_sudoku(gridSOLVED);
                         solved = true;
-                        gridConverted = false;
                     }
                 }
             }
@@ -144,6 +141,6 @@ int main(int argc, char* argv[])
     }
 
     cap.release();
-
+    
     return 0;
 }
