@@ -5,6 +5,18 @@ This program solves a sudoku using video capture and displays the solution in re
 ### Example:
 <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" />
 
+### Compile: 
+   ```
+cmake . && make
+```
+### Run:
+   ```
+./Runner
+```
+### Requirements:
+* [CMake](https://cmake.org/download/) 3.2 or higher 
+* [OpenCV](https://github.com/opencv/opencv)
+
 ### How it works:
 1. The program detects the sudoku grid by finding its contours. 
    The assumption here is that the sudoku grid is the biggest blob in video frame.
@@ -56,4 +68,4 @@ This program solves a sudoku using video capture and displays the solution in re
   * If, after starting the program, the sudoku grid is not clearly visible in the video (or only a part of the grid is visible)
     the program will still try to detect a grid (in the terminal you will see a message "grid detected") but when this 'grid' 
     (the thing the program wrongly detected as a sudoku grid) is passed to the findCells function it will result in an error.
-    So make sure that the grid is clearly visible. 
+    So make sure that the grid is clearly visible.
