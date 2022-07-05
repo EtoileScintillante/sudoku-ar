@@ -2,22 +2,22 @@
 
 This program solves a sudoku using video capture and displays the solution in real time.
 
-### Example:
+## Example
 <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" />
 
-### Compile: 
+## Compile 
    ```
 cmake . && make
 ```
-### Run:
+## Run
    ```
 ./Runner
 ```
-### Requirements:
+## Requirements
 * [CMake](https://cmake.org/download/) 3.2 or higher 
 * [OpenCV](https://github.com/opencv/opencv)
 
-### How it works:
+## How it works
 1. The program detects the sudoku grid by finding its contours. 
    The assumption here is that the sudoku grid is the biggest blob in video frame.
    
@@ -50,17 +50,18 @@ cmake . && make
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/mask.png" width="200" height="200" alt="mask" />
     
     Now that the mask is created, it must be placed at the exact position as the sudoku grid on the video. This is achieved by using 
-    the getAffineTransfrom function (so that the corners of the mask match the corners of the grid) and then the warpAffine function is used
-    to place the mask on the right position. 
+    the getAffineTransfrom function so that the corners of the mask match the corners of the grid. For this we use the grid contours (step 1). And then the warpAffine function is used
+    to put the mask in the right position. This goes as follows: first we create a zeros image (image with only black pixels) of the same size as the video frame and then with the x and y coordinates of the grid contours we can put the mask at the right position. Leading to this result: 
     
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/maskWarped.png" width="400" height="200" alt="warped mask" />
     
-    Note that the image of the mask now has the same size as the video window, but the background is still black. 
     The last step is to blend the video frame and mask together, which results in an augmented reality effect.
     
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/result.png" width="400" height="200" alt="result" />
     
-### Limitations:
+    To maintain the AR effect, step 1 and 6 are repeated untill the program stops. 
+    
+## Limitations
   * The sudoku grid must the biggest blob in video frame.
   * After finding a solution it is not possible to show a new sudoku to the camera and let the program solve the new one.
     The program must be restarted in order to do that.
@@ -68,4 +69,4 @@ cmake . && make
   * If, after starting the program, the sudoku grid is not clearly visible in the video (or only a part of the grid is visible)
     the program will still try to detect a grid (in the terminal you will see a message "grid detected") but when this 'grid' 
     (the thing the program wrongly detected as a sudoku grid) is passed to the findCells function it will result in an error.
-    So make sure that the grid is clearly visible.
+    So make sure the grid is clearly visible.
