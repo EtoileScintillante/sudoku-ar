@@ -2,8 +2,9 @@
 
 This program solves a sudoku using video capture and displays the solution in real time.
 
-## Example
-<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" />
+## Examples
+<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" /> 
+<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example1.gif" width="400" height="200" alt="example gif" />
 
 ## Compile 
    ```
