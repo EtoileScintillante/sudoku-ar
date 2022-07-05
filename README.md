@@ -58,7 +58,6 @@ cmake . && make
     The last step is to blend the video frame and mask together, which results in an augmented reality effect.
     
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/result.png" width="400" height="200" alt="result" />
-    <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" /> 
     
     To maintain the AR effect, step 1 and 6 are repeated until the program stops. 
     
