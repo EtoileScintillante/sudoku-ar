@@ -2,9 +2,8 @@
 
 This program solves a sudoku using video capture and displays the solution in real time.
 
-## Examples
-<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" /> 
-<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example1.gif" width="400" height="200" alt="example gif" />
+## Example
+<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example1.gif" width="400" height="240" alt="example gif" />
 
 ## Compile 
    ```
@@ -59,11 +58,12 @@ cmake . && make
     The last step is to blend the video frame and mask together, which results in an augmented reality effect.
     
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/result.png" width="400" height="200" alt="result" />
+    <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/example.gif" width="400" height="200" alt="example gif" /> 
     
     To maintain the AR effect, step 1 and 6 are repeated until the program stops. 
     
 ## Limitations
-  * The sudoku grid must the biggest blob in video frame.
+  * The sudoku grid must be the biggest blob in the video frame.
   * After finding a solution it is not possible to show a new sudoku to the camera and let the program solve the new one.
     The program must be restarted in order to do that.
   * The program can't deal with too much skewness or when the grid is held upside down for example. The AR effect will be lost in those situations. 
