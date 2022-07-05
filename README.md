@@ -59,7 +59,7 @@ cmake . && make
     
     <img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/result.png" width="400" height="200" alt="result" />
     
-    To maintain the AR effect, step 1 and 6 are repeated untill the program stops. 
+    To maintain the AR effect, step 1 and 6 are repeated until the program stops. 
     
 ## Limitations
   * The sudoku grid must the biggest blob in video frame.
