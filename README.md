@@ -3,7 +3,7 @@
 This program solves a sudoku using video capture and displays the solution in real time.
 
 ## Example
-<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/runner.gif" width="400" height="240" alt="example gif" />
+<img src="https://github.com/EtoileScintillante/sudoku-ar/blob/master/docs/runner.gif" width="400" height="210" alt="example gif" />
 
 ## Compile 
    ```
