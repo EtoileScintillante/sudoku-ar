@@ -122,10 +122,9 @@ int main(int argc, char* argv[])
             }
             else // If solution has been found
             {
-                /*  For the mask to work, we need to constantly find the contours of the grid,
-                since the grid may move a little while capturing the video
-                Holding it still is impossible anyway right? And it is fun if the digits move along with the grid
-                That gives the augmented reality feeling :) */
+                /*  For the AR effect to work we need to find the contours of the grid again and again
+                because if the grid moves while capturing the video, the position of the mask must change too
+                so that it can move along with the grid, creating the AR effect */
                 Mat srcClone = src.clone();
                 gridContour = detectGrid(srcClone);
                 gridContour = sortPoints4(gridContour);

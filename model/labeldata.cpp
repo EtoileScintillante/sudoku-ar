@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {  
-    //Process image to extract contour
+    // Preprocess image to extract contours of the digits
     Mat thr,gray,con;
     Mat src=imread("images/train.png",1);
     resize(src, src, Size(src.cols*2,src.rows*2), 0,0,INTER_LINEAR );
