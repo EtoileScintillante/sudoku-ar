@@ -146,7 +146,7 @@ std::vector< std::vector < Point > > findCells(Mat image, Mat src)
     std::vector<cv::Vec4i> hierarchy;
     findContours(invertedIMG, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
-    // The images of the sudokus all have cells with an area between 3000 and 5000
+    // The images of the sudokus all have cells with an area between 3000 and 5000 (this is after using the function cropGrid!)
     // These Points will be stored in a separate vector
     std::vector< std::vector < Point > > contoursCells;
     for (int i = 0; i < contours.size(); i++)
