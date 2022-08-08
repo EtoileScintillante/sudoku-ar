@@ -1,7 +1,6 @@
 #include "sudoku-solver.h"
 
-// Print sudoku puzzle
-void print_sudoku(std::vector<std::vector< int > > grid)
+void printSudoku(std::vector<std::vector< int > > grid)
 {
     printf("\n");
     int i, j;
@@ -16,8 +15,6 @@ void print_sudoku(std::vector<std::vector< int > > grid)
     printf("\n");
 }
 
-// This function chekcs whether the number (num) we inserted is put in a safe place
-// Safe place meaning that num does not already exist in the same row/col/3x3 box
 bool checkPlace(std::vector<std::vector< int > > grid, int row, int col, int num)
 {
     for (int i = 0; i < 9; i++)
@@ -43,8 +40,7 @@ bool checkPlace(std::vector<std::vector< int > > grid, int row, int col, int num
     return true; // if the place is safe
 }
 
-// This function inserts a num in every cell that has a 0 (i.e. the cell is empty)
-bool solve_sudoku(std::vector<std::vector< int > > grid, int row, int col, std::vector<std::vector< int > > &solvedGrid)
+bool solveSudoku(std::vector<std::vector< int > > grid, int row, int col, std::vector<std::vector< int > > &solvedGrid)
 {
     // Return true and print sudoku if we managed to place a num in every empty cell
     if (row == 9 - 1 && col == 9)
@@ -61,7 +57,7 @@ bool solve_sudoku(std::vector<std::vector< int > > grid, int row, int col, std::
     // If cell is not empty, move to next one
     if (grid[row][col] > 0) 
     {
-        return solve_sudoku(grid, row, col + 1, solvedGrid);
+        return solveSudoku(grid, row, col + 1, solvedGrid);
     }
     // Try to insert a number
     for (int num = 1; num < 9 + 1; num++)
@@ -69,7 +65,7 @@ bool solve_sudoku(std::vector<std::vector< int > > grid, int row, int col, std::
         if (checkPlace(grid, row, col, num))
         {
             grid[row][col] = num; // insert num if place is safe
-            if (solve_sudoku(grid, row, col + 1, solvedGrid))
+            if (solveSudoku(grid, row, col + 1, solvedGrid))
             {
                 return true;
             }
