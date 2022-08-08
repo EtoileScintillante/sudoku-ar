@@ -38,7 +38,7 @@ std::vector<Point> sortSquarePoints(std::vector<Point> corners);
 
 /**
  * @brief Creates a binary image of the sudoku grid with the digits filtered out,
- * where the lines of the grid are black and the cells are white.
+ * where the lines of the grid are white and the cells are black.
  * 
  * @param image image containing only a sudoku grid
  * @return binary image of the sudoku grid with the digits filtered out
@@ -47,9 +47,10 @@ Mat filterOutDigits(Mat image);
 
 /**
  * @brief Finds the contours of the cells of the sudoku grid.
+ * This functions also draws the contours of the cells, in case you want to see those.
  * 
  * @param image binary image of the sudoku grid with the digits filtered out
- * @param src image with sudoku grid on which the contours of the cells wll be drawn 
+ * @param src image with sudoku grid on which the contours of the cells will be drawn 
  * @return 2d vector of points containing the contours of the cells
  */
 std::vector< std::vector < Point > > findCells(Mat image, Mat src);
@@ -71,7 +72,7 @@ bool sortContours(std::vector<Point> a, std::vector<Point> b);
  *
  * @param cells 2d vector of contours of the cells of a sudoku grid (must be 81 cells)
  * @see sortContours
- * @return sorted 2d vector of contours of the cells of a sudoku grid
+ * @return sorted 2d vector of contours of the cells
  */
 std::vector< std::vector < Point > > sortCells(std::vector< std::vector < Point > > cells);
 
@@ -94,7 +95,6 @@ std::vector< std::vector< int > > gridToVector(Mat src, std::vector< std::vector
  * This mask contains only the digits of cells that were empty in the unsolved sudoku, 
  * since the goal of this mask is to fill in the empty cells of an unsolved sudoku image with digits
  * and creating an image of a solved sudoku. 
- * 
  *
  * @param contourCells sorted 2d vector of contours of the cells of a sudoku grid
  * @param solution 2d vector of integers representing the solved sudoku grid
