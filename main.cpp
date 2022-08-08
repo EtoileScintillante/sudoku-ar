@@ -112,10 +112,10 @@ int main(int argc, char* argv[])
                 {
                     /// Try to solve sudoku ///
                     std::cout << "\033[1;33mTrying to solve the sudoku...\033[0m\n";
-                    if (solve_sudoku(gridOG, 0, 0, gridSOLVED))
+                    if (solveSudoku(gridOG, 0, 0, gridSOLVED))
                     {
                         std::cout << "\033[1;32mSolution found!\033[0m\n";
-                        print_sudoku(gridSOLVED);
+                        printSudoku(gridSOLVED);
                         solved = true;
                     }
                 }
