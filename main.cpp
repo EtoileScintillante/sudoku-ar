@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
                 {
                     /// Find cells ///
                     std::cout << "\033[1;33mTrying to detect cells of the grid...\033[0m\n";
-                    gridContour = sortPoints4(gridContour);
+                    gridContour = sortSquarePoints(gridContour);
                     cropped = cropGrid(gridContour, src);
                     //imwrite("cropped.png", cropped.clone());  // Save image
                     Mat noDigs = filterOutDigits(cropped);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
                 {
                     /// Recognize digits ///
                     std::cout << "\033[1;33mTrying to recognize digits...\033[0m\n";
-                    gridOG = ImageToVec(cropped, contoursCells, knn);
+                    gridOG = gridToVector(cropped, contoursCells, knn);
                     if (gridOG.size() == 9)
                     {
                         std::cout << "\033[1;32mDigits recognized!\033[0m\n";
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
                 so that it can move along with the grid, creating the AR effect */
                 Mat srcClone = src.clone();
                 gridContour = detectGrid(srcClone);
-                gridContour = sortPoints4(gridContour);
+                gridContour = sortSquarePoints(gridContour);
                 Mat mask = createMask(contoursCells, gridSOLVED, gridOG);
                 Mat result = showSolution(gridContour, src, mask);
                 //imwrite("result.png", result);  // Save image
