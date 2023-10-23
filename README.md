@@ -1,5 +1,6 @@
 # Sudoku Solver - Augmented Reality
-[![macOS build Status](https://github.com/EtoileScintillante/sudoku-ar/workflows/Build/badge.svg)](https://github.com/EtoileScintillante/sudoku-ar/actions)  
+[![macOS build Status](https://github.com/EtoileScintillante/sudoku-ar/workflows/Build-macOS/badge.svg)](https://github.com/EtoileScintillante/sudoku-ar/actions) [![Windows build Status](https://github.com/EtoileScintillante/sudoku-ar/workflows/Build-Windows/badge.svg)](https://github.com/EtoileScintillante/sudoku-ar/actions)  
+  
 This program solves a sudoku using video capture and displays the solution in real time.
 
 ## Example
