@@ -1,5 +1,5 @@
 # Sudoku Solver - Augmented Reality
-
+[![macOS build Status](https://github.com/EtoileScintillante/sudoku-ar/workflows/Build/badge.svg)](https://github.com/EtoileScintillante/sudoku-ar/actions)  
 This program solves a sudoku using video capture and displays the solution in real time.
 
 ## Example
@@ -11,10 +11,10 @@ cmake . && make
 ```
 ## Run
    ```
-./Runner
+./sudoku-ar
 ```
 ## Requirements
-* [CMake](https://cmake.org/download/) 3.2 or higher 
+* [CMake](https://cmake.org/download/)
 * [OpenCV](https://github.com/opencv/opencv)
 
 ## How it works
